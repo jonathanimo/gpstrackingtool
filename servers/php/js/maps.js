@@ -172,7 +172,7 @@
                 }, {}));
             }
 
-                var finalLocation = false;
+                var lastSeen = false;
                 var counter = 0;
                 var locationArray = [];
                 
@@ -188,7 +188,7 @@
                     // want to set the map center on the last location
                     if (counter == $(json.locations).length) {
                         //gpsTrackerMap.setView(tempLocation, zoom);  if using fixed zoom
-                        finalLocation = true;
+                        lastSeen = true;
                     
                         if (!viewingAllRoutes) {
                             displayCityName(latitude, longitude);
@@ -207,7 +207,7 @@
                         $(this).attr('sessionID'),
                         $(this).attr('accuracy'),
                         $(this).attr('extraInfo'),
-                        gpsTrackerMap, finalLocation);
+                        gpsTrackerMap, lastSeen);
                 });
                 
                 // fit markers within window
@@ -222,10 +222,10 @@
     }
 
     function createMarker(latitude, longitude, speed, direction, distance, locationMethod, gpsTime,
-                          userName, sessionID, accuracy, extraInfo, map, finalLocation) {
+                          userName, sessionID, accuracy, extraInfo, map, lastSeen) {
         var iconUrl;
 
-        if (finalLocation) {
+        if (lastSeen) {
             iconUrl = 'images/coolred_small.png';
         } else {
             iconUrl = 'images/coolgreen2_small.png';
@@ -244,7 +244,7 @@
         var lastMarker = "</td></tr>";
 
         // when a user clicks on last marker, let them know it's final one
-        if (finalLocation) {
+        if (lastSeen) {
             lastMarker = "</td></tr><tr><td align=left>&nbsp;</td><td><b>Final location</b></td></tr>";
         }
 
@@ -253,10 +253,10 @@
 
         var popupWindowText = "<table border=0 style=\"font-size:95%;font-family:arial,helvetica,sans-serif;color:#000;\">" +
             "<tr><td align=right>&nbsp;</td><td>&nbsp;</td><td rowspan=2 align=right>" +
-            "<img src=images/" + getCompassImage(direction) + ".jpg alt= />" + lastMarker +
-            "<tr><td align=right>Speed:&nbsp;</td><td>" + speed +  " mph</td></tr>" +
-            "<tr><td align=right>Distance:&nbsp;</td><td>" + distance +  " mi</td><td>&nbsp;</td></tr>" +
-            "<tr><td align=right>Time:&nbsp;</td><td colspan=2>" + gpsTime +  "</td></tr>" +
+            //"<img src=images/" + getCompassImage(direction) + ".jpg alt= />" + lastMarker +
+            //"<tr><td align=right>Speed:&nbsp;</td><td>" + speed +  " mph</td></tr>" +
+            //"<tr><td align=right>Distance:&nbsp;</td><td>" + distance +  " mi</td><td>&nbsp;</td></tr>" +
+            "<tr><td align=right>Last Updated:&nbsp;</td><td colspan=2>" + gpsTime +  "</td></tr>" +
             "<tr><td align=right>Name:&nbsp;</td><td>" + userName + "</td><td>&nbsp;</td></tr>" +
             "<tr><td align=right>Accuracy:&nbsp;</td><td>" + accuracy + " ft</td><td>&nbsp;</td></tr></table>";
 
@@ -265,10 +265,10 @@
         var title = userName + " - " + gpsTime;
 
         // make sure the final red marker always displays on top 
-        if (finalLocation) {
+        if (lastSeen) {
             gpstrackerMarker = new L.marker(new L.LatLng(latitude, longitude), {title: title, icon: markerIcon, zIndexOffset: 999}).bindPopup(popupWindowText).addTo(map);
         } else {
-            gpstrackerMarker = new L.marker(new L.LatLng(latitude, longitude), {title: title, icon: markerIcon}).bindPopup(popupWindowText).addTo(map);
+            //gpstrackerMarker = new L.marker(new L.LatLng(latitude, longitude), {title: title, icon: markerIcon}).bindPopup(popupWindowText).addTo(map);
         }
         
         // if we are viewing all routes, we want to go to a route when a user taps on a marker instead of displaying popupWindow
@@ -280,8 +280,8 @@
 
                 viewingAllRoutes = false;
  
-                var indexOfRouteInRouteSelectDropdwon = sessionIDArray.indexOf(sessionID) + 1;
-                routeSelect.selectedIndex = indexOfRouteInRouteSelectDropdwon;
+                var indexOfRouteInRouteSelectDropdown = sessionIDArray.indexOf(sessionID) + 1;
+                routeSelect.selectedIndex = indexOfRouteInRouteSelectDropdown;
 
                 if (autoRefresh) {
                     restartInterval(); 
